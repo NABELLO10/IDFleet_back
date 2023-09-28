@@ -30,7 +30,8 @@ import {
 registrarTransportista,
 editarTransportista,
 eliminarTransportista,
-obtenerTransportista } from "../controllers/mantenedores/transportistaController.js";
+obtenerTransportista,
+obtenerTransportistasActivos } from "../controllers/mantenedores/transportistaController.js";
 
 // ARRASTRES ------------------------------------------------------------------------//
 import { 
@@ -48,7 +49,22 @@ eliminarCamion,
 obtenerCamiones,
 obtenerTodosCamiones } from "../controllers/mantenedores/camionesController.js";
 
+// TIPO NOTIFICACION ------------------------------------------------------------------------//
+import { 
+    registrarTipoNotificacion,
+    editarTipoNotificacion,
+    eliminarTipoNotificacion,
+    obtenerTipoNotificacion,
+    obtenerTipoNotificacionActivo } from "../controllers/mantenedores/tipoNotificacionController.js";
 
+// NOTIFICACION ------------------------------------------------------------------------//
+import { 
+    registrarNotificacion,
+    editarNotificacion,
+    eliminarNotificacion,
+    obtenerNotificacion } from "../controllers/mantenedores/notificacionesController.js";
+
+    
 const router = express.Router()
 
 // USUARIOS ------------------------------------------------------------------------//
@@ -78,6 +94,7 @@ router.post("/transportista", checkAuth, registrarTransportista)
 router.put("/transportista/:id", checkAuth, editarTransportista)
 router.delete("/transportista/:id", checkAuth, eliminarTransportista)
 router.get('/obtener-transportistas/:id_empresa/:id_empresa_global', checkAuth, obtenerTransportista) 
+router.get('/obtener-transportistas1/:id_empresa', checkAuth, obtenerTransportistasActivos) 
 
 // ARRASTRES ------------------------------------------------------------------------//
 router.post("/arrastre", checkAuth, registrarArrastres)
@@ -92,6 +109,19 @@ router.put("/camion/:id", checkAuth, editarCamion)
 router.delete("/camion/:id", checkAuth, eliminarCamion)
 router.get('/obtener-camiones/:id_empresa/:id_empresa_global', checkAuth, obtenerCamiones) 
 router.get('/obtener-todoscamiones/:id_empresa/:id_empresa_global', checkAuth, obtenerTodosCamiones) 
+
+// TIPO NOTIFICACION ------------------------------------------------------------------------//
+router.post("/tipo-notificacion", checkAuth, registrarTipoNotificacion)
+router.put("/tipo-notificacion/:id", checkAuth, editarTipoNotificacion)
+router.delete("/tipo-notificacion/:id", checkAuth, eliminarTipoNotificacion)
+router.get('/obtener-tipo-notificacion/:id_empresa', checkAuth, obtenerTipoNotificacion) 
+router.get('/obtener-tipo-notificacion1/:id_empresa', checkAuth, obtenerTipoNotificacionActivo) 
+
+// NOTIFICACION ------------------------------------------------------------------------//
+router.post("/notificacion", checkAuth, registrarNotificacion)
+router.put("/notificacion/:id", checkAuth, editarNotificacion)
+router.delete("/notificacion/:id", checkAuth, eliminarNotificacion)
+router.get('/obtener-notificacion/:id_empresa', checkAuth, obtenerNotificacion) 
 
 
 

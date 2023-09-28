@@ -19,7 +19,16 @@ const CorreosNotificacion = db.define('mov_correos_notificaciones', {
     correos:{
         type: DataTypes.TEXT
     },
+    asunto:{
+        type: DataTypes.STRING(100)
+    },
+    mensaje:{
+        type: DataTypes.TEXT
+    },
     est_activo:{
+        type: DataTypes.INTEGER
+    },
+    id_empresa:{
         type: DataTypes.INTEGER
     }
     

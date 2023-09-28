@@ -13,9 +13,15 @@ const Token = db.define('mae_token', {
     token:{
         type: Sequelize.STRING(2000)
     },      
+    fec_add:{
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW
+    }
 },
 {
-    timestamps: false,
+    timestamps: true, // Esto activa el seguimiento de createdAt y updatedAt
+    createdAt: false, // Esto desactiva la creación del campo createdAt
+    updatedAt: 'fec_add', // Esto mapea el campo updatedAt a fec_add en tu base de datos
     tableName: 'mae_token'
 })
 

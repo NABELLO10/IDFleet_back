@@ -83,10 +83,26 @@ const obtenerTransportista = async (req, res) => {
     }
 }
 
+const obtenerTransportistasActivos = async (req, res) => {
+    const {id_empresa} = req.params
+    try {
+        const tra = await Transportistas.findAll({
+            attributes: ['id', 'rut', 'nombre','ape_paterno', 'ape_materno', 'fono', 'email', 'est_activo', 'id_empresa'],
+            where:{
+                id_empresa, est_activo : 1
+            }
+        })
+        return res.status(200).json(tra)        
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 
 export{
     registrarTransportista,
     editarTransportista,
     eliminarTransportista,
-    obtenerTransportista
+    obtenerTransportista,
+    obtenerTransportistasActivos
 }

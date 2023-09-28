@@ -1,4 +1,5 @@
 import Ciudades from "../models/Ciudades.js"
+import Token from "../models/Token.js"
 
 const obtenerCiudades = async (req, res) =>{
     try {
@@ -14,8 +15,26 @@ const obtenerCiudades = async (req, res) =>{
     }
 }
 
+const actualizarWialon =  async (req, res) =>{
+    
+    const {usuario, token} = req.body
+
+     try {                          
+        await Token.update({
+            usuario, token
+        },{
+            where:{id : 1}
+        })     
+        res.status(200).json({msg: "Actualizado"})   
+
+     } catch (error) {
+        console.log(error)            
+    }       
+}
+
 
 export {
     obtenerCiudades,
+    actualizarWialon
 
 }

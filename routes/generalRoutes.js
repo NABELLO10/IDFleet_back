@@ -2,7 +2,7 @@ import express from "express";
 import checkAuth from "../middleware/authMiddleware.js";
 import { 
         obtenerCiudades,
-        // registrarLogs,
+        actualizarWialon,
         // obtenerClientes,
         // obtenerRequerimientos,
         // obtenerLugaresCliente,
@@ -21,6 +21,7 @@ import {
 const router = express.Router()
 
 router.get('/obtener-ciudades', checkAuth, obtenerCiudades)
+router.put('/token-wialon', checkAuth, actualizarWialon)
 // router.post('/add_log', checkAuth, registrarLogs)
 // router.get('/obtener-clientes/:id_empresa', checkAuth, obtenerClientes)
 // router.get('/obtener-cliente/:id', checkAuth, obtenerCliente)
