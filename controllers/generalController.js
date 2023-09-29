@@ -15,6 +15,22 @@ const obtenerCiudades = async (req, res) =>{
     }
 }
 
+    const obtenerTokenWialon = async (req, res) => {
+        try {           
+            const token = await Token.findOne({
+                attributes: ['token'],
+                where:{
+                    id : 1
+                }
+            }) 
+            return res.status(200).json(token);  
+                  
+         } catch (error) {
+           console.log(error);
+           return res.status(500).json({ message: "Error interno del servidor." });
+         }   
+    }
+
 const actualizarWialon =  async (req, res) =>{
     
     const {usuario, token} = req.body
@@ -35,6 +51,7 @@ const actualizarWialon =  async (req, res) =>{
 
 export {
     obtenerCiudades,
-    actualizarWialon
+    actualizarWialon,
+    obtenerTokenWialon
 
 }

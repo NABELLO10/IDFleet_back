@@ -1,0 +1,56 @@
+
+import requests
+import json
+
+BASE_URL = 'https://hst-api.wialon.com/wialon/ajax.html?svc='
+
+def get_data_from_api(url, params):
+    response = requests.get(url, params=params)
+    if response.status_code == 200:
+        return json.loads(response.text)
+    else:
+        print(f"Error con la respuesta. Código de estado: {response.status_code}")
+        return None
+
+token = '3aea5432fa86e4067492ad30c6fbe24e53F72405A071E085F9E5B7E8D030D08DFBB5477A'
+token_params = {
+    'params': f'{{"token":"{token}", "fl":"1"}}'
+}
+
+responseToken = get_data_from_api(BASE_URL + 'token/login', token_params)
+
+data_to_export = []
+
+if responseToken:
+    sid = responseToken['eid']
+    unidades = [21379940, 21568394]
+
+    for idUnidad in unidades:
+        common_params = {'sid': sid}
+        
+        unidad_params = {'params': f'{{"id":{idUnidad},"flags":1}}', **common_params}
+        posicion_params = {'params': f'{{"id":{idUnidad},"flags":4194304}}', **common_params}
+        sensor_params = {'params': f'{{"id":{idUnidad},"flags":4096}}', **common_params}
+        acc_params = {'params': f'{{"id":{idUnidad},"flags":1048576}}', **common_params}
+
+        unidad_data = get_data_from_api(BASE_URL + 'core/search_item', unidad_params)
+        posicion_data = get_data_from_api(BASE_URL + 'core/search_item', posicion_params)
+        sensor_data = get_data_from_api(BASE_URL + 'core/search_item', sensor_params)
+        acc_data = get_data_from_api(BASE_URL + 'core/search_item', acc_params)
+
+        unidad_info = {
+            'Patente': unidad_data["item"]["nm"],
+            'Velocidad': posicion_data["item"]["pos"]["s"],
+            'Fecha': posicion_data["item"]["pos"]["t"],
+            'Latitud': posicion_data["item"]["pos"]["y"],
+            'Longitud': posicion_data["item"]["pos"]["x"],
+            'Curso': posicion_data["item"]["pos"]["c"],
+            'Altitud': posicion_data["item"]["pos"]["z"],
+            'Nombre Sensor': sensor_data["item"]["sens"]["1"]["p"],
+            'ACC': acc_data["item"]["prms"][sensor_data["item"]["sens"]["1"]["p"]]["v"]
+        }
+
+        data_to_export.append(unidad_info)
+
+json_result = json.dumps(data_to_export, indent=4)
+print(json_result)
