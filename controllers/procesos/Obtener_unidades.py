@@ -1,6 +1,7 @@
 import requests
 import json
 
+
 def unidades_hctec(token):
     # URL de la API para obtener un listado de unidades
     units_url = "https://hst-api.wialon.com/wialon/ajax.html?svc=core/search_items"

@@ -3,11 +3,12 @@ import requests
 import json
 from datetime import datetime
 import pytz
+import sys
 
 def main():
     #EndPoint API REST para Inicio de sesión con Token Asignado
     urlInicio = 'https://hst-api.wialon.com/wialon/ajax.html?svc=token/login'
-    token = '3aea5432fa86e4067492ad30c6fbe24e53F72405A071E085F9E5B7E8D030D08DFBB5477A' #Tkoen HCTEC
+    token = sys.argv[1]  #Tkoen HCTEC
     argumentosInicio = {'params':'{"token":"' + f'{token}' + '", "fl":"1"}'}
 
     #EndPoint API REST para traer datos de unidad (Patente) 
@@ -70,7 +71,7 @@ def main():
     data = [{
         'Patente': patente["nm"],
         'Velocidad': datos["pos"]["s"],
-        'Fecha GPS': str(horaGpsLocal),  # Convertir el datetime a string para ser serializable en JSON
+        'FechaGPS': str(horaGpsLocal),  # Convertir el datetime a string para ser serializable en JSON
         'Latitud': datos["pos"]["y"],
         'Longitud': datos["pos"]["x"],
         'Curso': datos["pos"]["c"],

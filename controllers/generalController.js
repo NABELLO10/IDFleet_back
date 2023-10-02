@@ -17,8 +17,7 @@ const obtenerCiudades = async (req, res) =>{
 
     const obtenerTokenWialon = async (req, res) => {
         try {           
-            const token = await Token.findOne({
-                attributes: ['token'],
+            const token = await Token.findOne({             
                 where:{
                     id : 1
                 }

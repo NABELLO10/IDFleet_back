@@ -1,6 +1,7 @@
 
 import requests
 import json
+import sys
 
 BASE_URL = 'https://hst-api.wialon.com/wialon/ajax.html?svc='
 
@@ -12,7 +13,7 @@ def get_data_from_api(url, params):
         print(f"Error con la respuesta. Código de estado: {response.status_code}")
         return None
 
-token = '3aea5432fa86e4067492ad30c6fbe24e53F72405A071E085F9E5B7E8D030D08DFBB5477A'
+token = sys.argv[1] 
 token_params = {
     'params': f'{{"token":"{token}", "fl":"1"}}'
 }
@@ -41,7 +42,7 @@ if responseToken:
         unidad_info = {
             'Patente': unidad_data["item"]["nm"],
             'Velocidad': posicion_data["item"]["pos"]["s"],
-            'Fecha': posicion_data["item"]["pos"]["t"],
+            'FechaGPS': unidad_data["item"]["nm"],
             'Latitud': posicion_data["item"]["pos"]["y"],
             'Longitud': posicion_data["item"]["pos"]["x"],
             'Curso': posicion_data["item"]["pos"]["c"],

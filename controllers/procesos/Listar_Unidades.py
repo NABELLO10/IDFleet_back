@@ -1,9 +1,10 @@
 from Obtener_unidades import unidades_hctec
 
 import json
+import sys
 
 def main():
-    token = '3aea5432fa86e4067492ad30c6fbe24e53F72405A071E085F9E5B7E8D030D08DFBB5477A'
+    token = sys.argv[1]  
     ids = unidades_hctec(token)
     
     # Guarda las unidades en una lista

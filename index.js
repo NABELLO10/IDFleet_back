@@ -49,7 +49,7 @@ exportarModelos();
 
 
   //Utilizando cors para proteger la api ORIGINAL
-const dominiosPermitidos = [process.env.FRONTEND_URL, '127.0.0.1']
+const dominiosPermitidos = [process.env.FRONTEND_URL, '127.0.0.1', 'http://localhost:5174']
 const corsOptions = {
     origin : function(origin, callback) {
         if (dominiosPermitidos.indexOf(origin) !== -1){
@@ -82,7 +82,7 @@ app.use("/api-emsegur/general/", generalRoutes);
 
 
 //PUERTOS
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 4001;
 app.listen(PORT, () => {
   console.log(`Servidor en puerto ${PORT}`);
 });
