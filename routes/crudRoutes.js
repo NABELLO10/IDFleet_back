@@ -64,6 +64,13 @@ import {
     eliminarNotificacion,
     obtenerNotificacion } from "../controllers/mantenedores/notificacionesController.js";
 
+// CAT NOTIFICACION ------------------------------------------------------------------------//
+import { 
+    registrarCat,
+    editarCat,
+    eliminarCat,
+    obtenerCat } from "../controllers/mantenedores/catNotificacionesController.js";
+
     
 const router = express.Router()
 
@@ -101,7 +108,7 @@ router.post("/arrastre", checkAuth, registrarArrastres)
 router.put("/arrastre/:id", checkAuth, editarArrastre)
 router.delete("/arrastre/:id", checkAuth, eliminarArrastre)
 router.get('/obtener-arrastres/:id_empresa/:id_empresa_global', checkAuth, obtenerArrastres) 
-router.get('/obtener-todosarrastres/:id_empresa_global', checkAuth, obtenerTodosArrastres) 
+router.get('/obtener-todosarrastres/:id_empresa', checkAuth, obtenerTodosArrastres) 
 
 // CAMIONES ------------------------------------------------------------------------//
 router.post("/camion", checkAuth, registrarCamion)
@@ -114,16 +121,20 @@ router.get('/obtener-todoscamiones/:id_empresa/:id_empresa_global', checkAuth, o
 router.post("/tipo-notificacion", checkAuth, registrarTipoNotificacion)
 router.put("/tipo-notificacion/:id", checkAuth, editarTipoNotificacion)
 router.delete("/tipo-notificacion/:id", checkAuth, eliminarTipoNotificacion)
-router.get('/obtener-tipo-notificacion/:id_empresa', checkAuth, obtenerTipoNotificacion) 
-router.get('/obtener-tipo-notificacion1/:id_empresa', checkAuth, obtenerTipoNotificacionActivo) 
+router.get('/obtener-tipo-notificacion/:id_empresa_sistema/:id_transportista/:id_empresa', checkAuth, obtenerTipoNotificacion) 
+router.get('/not-activas/:id_empresa/:id_cat_not', checkAuth, obtenerTipoNotificacionActivo) 
 
 // NOTIFICACION ------------------------------------------------------------------------//
 router.post("/notificacion", checkAuth, registrarNotificacion)
 router.put("/notificacion/:id", checkAuth, editarNotificacion)
 router.delete("/notificacion/:id", checkAuth, eliminarNotificacion)
-router.get('/obtener-notificacion/:id_empresa', checkAuth, obtenerNotificacion) 
+router.get('/obtener-notificacion/:id_empresa/:id_transportista/:id_empresa_sistema', checkAuth, obtenerNotificacion) 
 
-
+// CAT NOTIFICACION ------------------------------------------------------------------------//
+router.post("/cat-not", checkAuth, registrarCat)
+router.put("/cat-not/:id", checkAuth, editarCat)
+router.delete("/cat-not/:id", checkAuth, eliminarCat)
+router.get('/cat-not/:id_empresa', checkAuth, obtenerCat) 
 
 
 export default router

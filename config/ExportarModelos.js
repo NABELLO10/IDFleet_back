@@ -12,11 +12,17 @@ import Transportistas from "../models/Transportistas.js"
 import Camiones from "../models/Camiones.js"
 import Arrastres from "../models/Arrastres.js"
 import Token from "../models/Token.js"
+import Sensores from "../models/Sensores.js"
+import LogSensores from "../models/LogSensores.js"
+import CatNotificacion from "../models/CatNotificacion.js"
+import ResumenGPS from "../models/ResumenGPS.js"
+
 
 import CorreosNotificacion from "../models/CorreosNotificacion.js"
 
 const exportarModelos = () =>{
-Log, Pais, Region,Provincias,Ciudades,Perfiles,Empresas,Usuarios, EmpresasSistema, TipoNotificacion, Transportistas, CorreosNotificacion,Camiones,Arrastres,Token
+Log, Pais, Region,Provincias,Ciudades,Perfiles,Empresas,Usuarios, EmpresasSistema, TipoNotificacion, Transportistas, CorreosNotificacion,Camiones,Arrastres,Token, Sensores, 
+LogSensores, CatNotificacion, ResumenGPS
 }
 
 export default exportarModelos

@@ -3,6 +3,7 @@ import db from "../config/db.js";
 
 import TipoNotificacion from "./TipoNotificacion.js";
 import Transportistas from "./Transportistas.js";
+import EmpresasSistema from "./EmpresasSistema.js";
 
 const CorreosNotificacion = db.define('mov_correos_notificaciones', {
     id: {
@@ -30,6 +31,9 @@ const CorreosNotificacion = db.define('mov_correos_notificaciones', {
     },
     id_empresa:{
         type: DataTypes.INTEGER
+   },
+    id_empresa_sistema:{
+        type: DataTypes.INTEGER
     }
     
 },
@@ -40,5 +44,6 @@ const CorreosNotificacion = db.define('mov_correos_notificaciones', {
 
 CorreosNotificacion.belongsTo(TipoNotificacion, {foreignKey : "id_notificacion"})
 CorreosNotificacion.belongsTo(Transportistas, {foreignKey : "id_transportista"})
+CorreosNotificacion.belongsTo(EmpresasSistema, {foreignKey : "id_empresa_sistema"})
 
 export default CorreosNotificacion

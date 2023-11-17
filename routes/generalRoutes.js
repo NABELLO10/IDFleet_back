@@ -6,7 +6,9 @@ import {
 import { 
         obtenerCiudades,
         actualizarWialon,
-        obtenerTokenWialon
+        obtenerTokenWialon,
+        obtenerDatosOx,
+        obtenerResumenGPS
              } from "../controllers/generalController.js";
 
 
@@ -15,6 +17,8 @@ const router = express.Router()
 router.get('/obtener-ciudades', checkAuth, obtenerCiudades)
 router.put('/token-wialon', checkAuth, actualizarWialon)
 router.get('/token-wialon', checkAuth, obtenerTokenWialon)
+router.get('/datos-ox', checkAuth, obtenerDatosOx)
+router.get('/resumenGPS', checkAuth, obtenerResumenGPS)
 
 router.get('/listarUnidadesPY', checkAuth, listarUnidadesPY)
 router.get('/datosOx', checkAuth, datosOxPY)

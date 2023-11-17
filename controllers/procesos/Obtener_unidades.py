@@ -45,12 +45,12 @@ def unidades_hctec(token):
     datosjson = units_response.json()
     cadena = datosjson["items"]
     #datos = json.loads(cadena)
+    
+    #ids = []
 
-    ids = []
-
-    for datos in cadena:
-        ids.append(datos["id"])
+    #for datos in cadena:
+        #ids.append(datos["id"])
 
 
     #print("id:", ids)
-    return ids
+    return cadena

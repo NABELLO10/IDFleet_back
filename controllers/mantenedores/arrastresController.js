@@ -111,9 +111,9 @@ const obtenerArrastres = async (req, res) => {
 
 const obtenerTodosArrastres = async (req, res) => {
     try {
-        const {id_empresa_global } = req.params;
+        const {id_empresa } = req.params;
         const arrastres = await Arrastres.findAll({
-            where: {id_empresa_global, est_activo : 1 },
+            where: {id_empresa, est_activo : 1 },
             include: [{model : EmpresasSistema}, {model : Transportistas}]
         });
         return res.status(200).json(arrastres);        

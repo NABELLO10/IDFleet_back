@@ -11,6 +11,8 @@ import exportarModelos from "./config/ExportarModelos.js";
 import loginRoutes from "./routes/loginRoutes.js"
 import crudRoutes from "./routes/crudRoutes.js"
 import generalRoutes from "./routes/generalRoutes.js"
+ 
+ import './controllers/procesos/sensoresController.js'  
 
 //aqui se crea la aplicacion de express
 const app = express();

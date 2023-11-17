@@ -1,14 +1,17 @@
 import TipoNotificacion from "../../models/TipoNotificacion.js"
+import CatNotificacion from "../../models/CatNotificacion.js"
 
 
 const registrarTipoNotificacion = async (req, res) => {
-    const {nom_tipo, est_activo, id_empresa} = req.body
+    const {id_cat_not, val_min, val_max, obs, est_activo, id_empresa, id_empresa_sistema, id_transportista} = req.body
 
     try {  
         const existe = await TipoNotificacion.findOne({
             where:{
-                nom_tipo,
-                id_empresa
+                id_cat_not,
+                id_empresa,
+                id_empresa_sistema,
+                id_transportista
             }
         }) 
 
@@ -18,9 +21,11 @@ const registrarTipoNotificacion = async (req, res) => {
         }
                          
         await TipoNotificacion.create({
-            nom_tipo,
+            id_cat_not,
+            val_min, val_max, obs,
             est_activo,
-            id_empresa
+            id_empresa,
+            id_empresa_sistema, id_transportista
         })      
       
         res.status(200).json({msg: "Tipo Registrado"})
@@ -33,7 +38,7 @@ const registrarTipoNotificacion = async (req, res) => {
 
 const editarTipoNotificacion =  async (req, res) =>{
     const {id} = req.params
-    const {nom_tipo, est_activo} = req.body
+    const {id_cat_not, val_min, val_max, obs, est_activo, id_empresa_sistema, id_transportista} = req.body
 
     try {
         const existe = await TipoNotificacion.findByPk(id) 
@@ -44,7 +49,7 @@ const editarTipoNotificacion =  async (req, res) =>{
         }      
                     
         await TipoNotificacion.update({
-            nom_tipo, est_activo
+            id_cat_not, val_min, val_max, obs, est_activo, id_empresa_sistema, id_transportista
         },{
             where:{
                 id : id
@@ -77,28 +82,33 @@ const eliminarTipoNotificacion = async (req, res) =>{
 
 const obtenerTipoNotificacion = async (req, res) => {
     try {
-        const {id_empresa} = req.params
+        const {id_transportista, id_empresa_sistema, id_empresa} = req.params
+        
         const tipos = await TipoNotificacion.findAll({
-            where:{id_empresa}
+            where:{id_transportista, id_empresa_sistema, id_empresa},
+            include: [{model : CatNotificacion}]
         })
+
+
         return res.status(200).json(tipos)        
     } catch (error) {
         console.log(error)
     }
 }
+
 
 const obtenerTipoNotificacionActivo = async (req, res) => {
     try {
-        const {id_empresa} = req.params
+        const { id_empresa, id_cat_not} = req.params
         const tipos = await TipoNotificacion.findAll({
-            where:{id_empresa, est_activo : 1}
+            where:{id_empresa, est_activo : 1, id_cat_not},
+            include: [{model : CatNotificacion}]
         })
         return res.status(200).json(tipos)        
     } catch (error) {
-        console.log(error)
+        console.log(error);
     }
 }
-
 
 
 
