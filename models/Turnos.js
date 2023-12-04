@@ -1,7 +1,7 @@
 import { DataTypes, Sequelize } from "sequelize";
 import db from "../config/db.js";
 
-const LogSensores = db.define('log_sensores', {
+const Turnos = db.define('mov_turnos', {
     id: {
         type: Sequelize.INTEGER, 
         primaryKey:true, 
@@ -10,24 +10,24 @@ const LogSensores = db.define('log_sensores', {
     patente:{
         type: Sequelize.STRING(10)
     },
-    tipo:{
+    id_usuario:{
         type: Sequelize.STRING(500)
     },
-    detalle:{
-        type: Sequelize.TEXT
+    est_iniciado:{
+        type: Sequelize.INTEGER
+    },
+    est_terminado:{
+        type: Sequelize.INTEGER
     },
     fec_add: {
         type: DataTypes.DATE,    
         defaultValue: DataTypes.NOW 
-    },  
-    est_activo:{
-        type: Sequelize.INTEGER
-    },
+    }
 },
 {
     timestamps: false,
-    tableName: 'log_sensores'
+    tableName: 'mov_turnos'
 })
 
 
-export default LogSensores
+export default Turnos

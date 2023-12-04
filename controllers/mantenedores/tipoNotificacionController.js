@@ -99,9 +99,9 @@ const obtenerTipoNotificacion = async (req, res) => {
 
 const obtenerTipoNotificacionActivo = async (req, res) => {
     try {
-        const { id_empresa, id_cat_not} = req.params
+        const { id_empresa, id_transportista, id_empresa_sistema} = req.params
         const tipos = await TipoNotificacion.findAll({
-            where:{id_empresa, est_activo : 1, id_cat_not},
+            where:{id_empresa, est_activo : 1, id_transportista, id_empresa_sistema},
             include: [{model : CatNotificacion}]
         })
         return res.status(200).json(tipos)        

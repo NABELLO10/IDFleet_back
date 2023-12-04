@@ -5,6 +5,7 @@ import { Sequelize } from "sequelize";
 
 //BASE DE DATOS
 import db from "./config/db.js";
+import dbAzure from "./config/dbAzure.js";
 import exportarModelos from "./config/ExportarModelos.js";
 
 //ROUTES
@@ -36,6 +37,14 @@ exportarModelos();
    .catch((error) => {
      console.log(error);
    });
+ 
+/*    dbAzure.sync()
+   .then(() => {
+     console.log("BD AZURE conectada");
+   })
+   .catch((error) => {
+     console.log(error);
+   }); */
 
 // async function conectarDB(){
 //   try {

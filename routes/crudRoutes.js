@@ -122,7 +122,7 @@ router.post("/tipo-notificacion", checkAuth, registrarTipoNotificacion)
 router.put("/tipo-notificacion/:id", checkAuth, editarTipoNotificacion)
 router.delete("/tipo-notificacion/:id", checkAuth, eliminarTipoNotificacion)
 router.get('/obtener-tipo-notificacion/:id_empresa_sistema/:id_transportista/:id_empresa', checkAuth, obtenerTipoNotificacion) 
-router.get('/not-activas/:id_empresa/:id_cat_not', checkAuth, obtenerTipoNotificacionActivo) 
+router.get('/not-activas/:id_empresa/:id_transportista/:id_empresa_sistema', checkAuth, obtenerTipoNotificacionActivo) 
 
 // NOTIFICACION ------------------------------------------------------------------------//
 router.post("/notificacion", checkAuth, registrarNotificacion)

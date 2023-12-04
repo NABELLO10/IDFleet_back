@@ -2,6 +2,8 @@ import Ciudades from "../models/Ciudades.js"
 import Token from "../models/Token.js"
 import Sensores from "../models/Sensores.js"
 import ResumenGPS from "../models/ResumenGPS.js"
+import OxSchool from "../models/OxSchool.js"
+import LogSensores from "../models/LogSensores.js"
 
 
 const obtenerCiudades = async (req, res) =>{
@@ -54,8 +56,29 @@ const actualizarWialon =  async (req, res) =>{
 
 const obtenerDatosOx = async (req, res) => {
     try {
+      const {patente} = req.params
+
       const registros = await Sensores.findAll({
+        where :{ patente },
         limit: 200,
+        order: [['id', 'DESC']] 
+      });
+      return res.status(200).json(registros);
+
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: "Error interno del servidor." });
+    }
+};
+
+
+const obtenerAlertas = async (req, res) => {
+    try {
+      const {patente} = req.params
+
+      const registros = await LogSensores.findAll({
+        where :{ patente },
+        limit: 500,
         order: [['id', 'DESC']] 
       });
       return res.status(200).json(registros);
@@ -81,11 +104,28 @@ const obtenerResumenGPS = async (req, res) => {
 };
 
 
+
+const obtenerDatosSchool = async (req, res) => {
+  try {
+    const registros = await OxSchool.findAll({
+      limit: 200,
+      order: [['id', 'DESC']] 
+    });
+    return res.status(200).json(registros);
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Error interno del servidor." });
+  }
+};
+
 export {
     obtenerCiudades,
     actualizarWialon,
     obtenerTokenWialon,
     obtenerDatosOx,
-    obtenerResumenGPS
+    obtenerResumenGPS,
+    obtenerDatosSchool,
+    obtenerAlertas
 
 }

@@ -134,6 +134,18 @@ async function guardarLog(data) {
       fecha: new Date(),
     });
   }
+
+  const fueraRangotemp = await checkTemp(data);
+
+  if (Object.keys(fueraRangotemp).length) {
+    // Guarda en la tabla de logs
+    LogSensores.create({
+      patente: data.patente,
+      tipo: "Temperatura fuera de límites",
+      detalle: JSON.stringify(fueraRango),
+      fecha: new Date(),
+    });
+  }
 }
 
 async function checkOxigenation(data) {
@@ -164,8 +176,26 @@ async function checkOxigenation(data) {
   return fueraRango;
 }
 
+async function checkTemp(data) {
+  const tipoNotif = await TipoNotificacion.findOne({
+    where: { id_cat_not: 2, id_empresa: 1 },
+  });
+
+  if (!tipoNotif) return {}; // Retorna un objeto vacío si no encuentra el tipo de notificación
+  let fueraRango = {};
+
+    if (
+      data.temp < parseFloat(tipoNotif.val_min) ||
+      data.temp > parseFloat(tipoNotif.val_max)
+    ) {
+      fueraRango["temp"] = data.temp;
+    }
+
+  return fueraRango;
+}
+
 // Programa la tarea para que se ejecute, por ejemplo, cada minuto
-cron.schedule("*/3 * * * *", () => {
+cron.schedule("*/1 * * * *", () => {
   console.log("Tarea programada siendo ejecutada...");
   registrarSensor();
 });
