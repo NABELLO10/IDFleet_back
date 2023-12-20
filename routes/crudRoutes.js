@@ -33,6 +33,13 @@ eliminarTransportista,
 obtenerTransportista,
 obtenerTransportistasActivos } from "../controllers/mantenedores/transportistaController.js";
 
+// TRANSPORTISTAS ------------------------------------------------------------------------//
+import { 
+registrarConductor,
+editarConductor,
+eliminarConductor,
+obtenerConductores } from "../controllers/mantenedores/conductoresController.js";
+
 // ARRASTRES ------------------------------------------------------------------------//
 import { 
 registrarArrastres,
@@ -102,6 +109,13 @@ router.put("/transportista/:id", checkAuth, editarTransportista)
 router.delete("/transportista/:id", checkAuth, eliminarTransportista)
 router.get('/obtener-transportistas/:id_empresa/:id_empresa_global', checkAuth, obtenerTransportista) 
 router.get('/obtener-transportistas1/:id_empresa', checkAuth, obtenerTransportistasActivos) 
+
+// CODUCTORES ------------------------------------------------------------------------//
+router.post("/conductor", checkAuth, registrarConductor)
+router.put("/conductor/:id", checkAuth, editarConductor)
+router.delete("/conductor/:id", checkAuth, eliminarConductor)
+router.get('/obtener-conductores/:id_empresa/:id_empresa_global', checkAuth, obtenerConductores) 
+
 
 // ARRASTRES ------------------------------------------------------------------------//
 router.post("/arrastre", checkAuth, registrarArrastres)

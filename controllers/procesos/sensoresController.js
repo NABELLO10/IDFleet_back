@@ -195,7 +195,7 @@ async function checkTemp(data) {
 }
 
 // Programa la tarea para que se ejecute, por ejemplo, cada minuto
-cron.schedule("*/1 * * * *", () => {
+cron.schedule("*/5 * * * *", () => {
   console.log("Tarea programada siendo ejecutada...");
   registrarSensor();
 });
