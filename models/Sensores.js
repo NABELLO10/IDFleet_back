@@ -10,7 +10,10 @@ const Sensores = db.define('mov_oxigenacion',{
         primaryKey: true
     },
     patente:{
-        type: Sequelize.STRING(20)
+        type: Sequelize.STRING(2000)
+    },
+    id_wialon:{
+        type: Sequelize.INTEGER
     },
     fechaGPS:{
         type: Sequelize.STRING(200)
@@ -78,7 +81,7 @@ const Sensores = db.define('mov_oxigenacion',{
     },
     est_alerta:{
         type: Sequelize.INTEGER
-    },
+    }
 },
 {
     timestamps: false,

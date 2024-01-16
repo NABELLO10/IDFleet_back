@@ -1,12 +1,14 @@
 // Este es tu controlador, por ejemplo, sensorController.js
 import Sensores from "../../models/Sensores.js";
 import ResumenGPS from "../../models/ResumenGPS.js";
+import Camiones from "../../models/Camiones.js";
 import Token from "../../models/Token.js";
 import cron from "node-cron";
 import { exec } from "child_process"; // Asegúrate de importar exec si no lo has hecho
 import TipoNotificacion from "../../models/TipoNotificacion.js";
 import LogSensores from "../../models/LogSensores.js";
-
+import { Op, where } from "sequelize";
+import Sequelize from "sequelize";
 import { promisify } from "util";
 
 import { fileURLToPath } from "url";
@@ -26,20 +28,110 @@ const registrarSensor = async () => {
       id: 1,
     },
   });
-  const scriptPath = join(__dirname, "Datos_ox.py"); // <-- Corregido aquí
+
+  const wialonCamiones = await Camiones.findAll({
+    where: {
+      est_activo: 1,
+      id_wialon: {
+        [Sequelize.Op.gt]: 0, // Op.gt es el operador 'greater than' (mayor que)
+      },
+    },
+  });
+
+  // Transformar el resultado en un array de valores de id_wialon
+  const idWialonArray = wialonCamiones
+    .filter((r) => r.est_ox == 1 )
+    .map((camion) => camion.id_wialon);
+
+  const idWialonArrayGral = wialonCamiones
+    .filter((r) => r.est_ox == 0)
+    .map((camion) => camion.id_wialon);
+
+
+  if (idWialonArrayGral.length > 0) {
+    const unidadesStr = idWialonArrayGral.join(",");
+    const scriptPath = join(__dirname, "datosGralCamiones.py");
+
+    try {
+      const resultado = await execAsync(
+        `python ${scriptPath} ${token.token} ${unidadesStr}`
+      );
+
+      arraySensores = JSON.parse(resultado.stdout);
+    } catch (error) {
+      console.error(`exec error: ${error}`);
+      return;
+    }
+
+    arraySensores.map(async (r) => {
+      await Sensores.create({
+        patente: r.Patente,
+        id_wialon: r.idWialon,
+        fechaGPS: r.FechaGPS,
+        latitud: r.Latitud,
+        longitud: r.Longitud,
+        curso: r.Curso,
+        altitud: r.Altitud,
+        fechaRegistro: new Date(),
+      });
+
+      const existeResumen = await ResumenGPS.findAll({
+        where: {
+          id_wialon: r.idWialon,
+        },
+      });
+
+      if (existeResumen.length > 0) {
+        await ResumenGPS.update(
+          {
+            patente: r.Patente,
+            fechaGPS: r.FechaGPS,
+            latitud: r.Latitud,
+            longitud: r.Longitud,
+            curso: r.Curso,
+            altitud: r.Altitud,
+            fechaRegistro: new Date(),
+          },
+          {
+            where: {
+              id_wialon: r.idWialon,
+            },
+          }
+        );
+      } else {
+        await ResumenGPS.create({
+          patente: r.Patente,
+          id_wialon: r.idWialon,
+          fechaGPS: r.FechaGPS,
+          latitud: r.Latitud,
+          longitud: r.Longitud,
+          curso: r.Curso,
+          altitud: r.Altitud,
+          fechaRegistro: new Date(),
+        });
+      }
+    });
+  }
+
+  // Unir los valores en una cadena separada por comas
+  const unidadesStr = idWialonArray.join(",");
+  const scriptPath = join(__dirname, "datosOXCamiones.py");
 
   try {
-    const resultado = await execAsync(`python ${scriptPath} ${token.token}`);
+    const resultado = await execAsync(
+      `python ${scriptPath} ${token.token} ${unidadesStr}`
+    );
     arraySensores = JSON.parse(resultado.stdout);
   } catch (error) {
     console.error(`exec error: ${error}`);
     return;
   }
-
+  
   arraySensores.map(async (r) => {
     const resultado = await Sensores.create({
       patente: r.Patente,
       fechaGPS: r.FechaGPS,
+      id_wialon: r.idWialon,
       latitud: r.Latitud,
       longitud: r.Longitud,
       curso: r.Curso,
@@ -57,19 +149,19 @@ const registrarSensor = async () => {
       fecha: r.Valores[10],
       time: r.Valores[11],
     });
+
     guardarLog(resultado);
 
     const existeResumen = await ResumenGPS.findAll({
       where: {
-        patente: r.Patente,
+        id_wialon: r.idWialon,
       },
     });
 
-
     if (existeResumen.length > 0) {
-        
       await ResumenGPS.update(
         {
+          patente: r.Patente,
           fechaGPS: r.FechaGPS,
           latitud: r.Latitud,
           longitud: r.Longitud,
@@ -91,14 +183,14 @@ const registrarSensor = async () => {
         },
         {
           where: {
-            patente: r.Patente,
+            id_wialon: r.idWialon,
           },
         }
       );
     } else {
-  
       await ResumenGPS.create({
         patente: r.Patente,
+        id_wialon: r.idWialon,
         fechaGPS: r.FechaGPS,
         latitud: r.Latitud,
         longitud: r.Longitud,
@@ -123,35 +215,48 @@ const registrarSensor = async () => {
 };
 
 async function guardarLog(data) {
-  const fueraRango = await checkOxigenation(data);
+  const empresaUnidad = await Camiones.findAll({
+    attributes: ["id_empresa", "id_transportista"],
+    where: {
+      nom_patente: data.patente,
+    },
+  });
+  
+  // Obteniendo el id_empresa e id_transportista
+  const idEmpresa = empresaUnidad.map((unidad) => unidad.id_empresa);
+  const idTransportista = empresaUnidad.map((unidad) => unidad.id_transportista);
+  
+  const fueraRango = await checkOxigenation(data, idEmpresa, idTransportista);
 
   if (Object.keys(fueraRango).length) {
     // Guarda en la tabla de logs
     LogSensores.create({
       patente: data.patente,
-      tipo: "Oxigenación fuera de límites",
+      tipo: "Oxigenación GPS fuera de límites",
       detalle: JSON.stringify(fueraRango),
       fecha: new Date(),
     });
   }
 
-  const fueraRangotemp = await checkTemp(data);
+  const fueraRangotemp = await checkTemp(data, idEmpresa, idTransportista);
 
   if (Object.keys(fueraRangotemp).length) {
     // Guarda en la tabla de logs
     LogSensores.create({
       patente: data.patente,
-      tipo: "Temperatura fuera de límites",
-      detalle: JSON.stringify(fueraRango),
+      tipo: "Temperatura GPS fuera de límites",
+      detalle: JSON.stringify(fueraRangotemp),
       fecha: new Date(),
     });
   }
 }
 
-async function checkOxigenation(data) {
+
+async function checkOxigenation(data, empresaUnidad, idTransportista) {
   const tipoNotif = await TipoNotificacion.findOne({
-    where: { id_cat_not: 1, id_empresa: 1 },
+    where: { id_cat_not: 1, id_empresa_sistema: empresaUnidad, id_transportista : idTransportista },
   });
+
 
   if (!tipoNotif) return {}; // Retorna un objeto vacío si no encuentra el tipo de notificación
   let fueraRango = {};
@@ -176,26 +281,27 @@ async function checkOxigenation(data) {
   return fueraRango;
 }
 
-async function checkTemp(data) {
+async function checkTemp(data, empresaUnidad, idTransportista) {
   const tipoNotif = await TipoNotificacion.findOne({
-    where: { id_cat_not: 2, id_empresa: 1 },
+    where: { id_cat_not: 2, id_empresa_sistema: empresaUnidad, id_transportista : idTransportista },
   });
 
   if (!tipoNotif) return {}; // Retorna un objeto vacío si no encuentra el tipo de notificación
   let fueraRango = {};
 
-    if (
-      data.temp < parseFloat(tipoNotif.val_min) ||
-      data.temp > parseFloat(tipoNotif.val_max)
-    ) {
-      fueraRango["temp"] = data.temp;
-    }
+  if (
+    data.temp < parseFloat(tipoNotif.val_min) ||
+    data.temp > parseFloat(tipoNotif.val_max)
+  ) {
+    fueraRango["temp"] = data.temp;
+  }
 
   return fueraRango;
 }
 
-// Programa la tarea para que se ejecute, por ejemplo, cada minuto
-cron.schedule("*/5 * * * *", () => {
-  console.log("Tarea programada siendo ejecutada...");
+// Programa la tarea para que se ejecute, por ejemplo, cada 3 minutos
+cron.schedule("*/1 * * * *", () => {
+  console.log("Tarea programada obtener OX siendo ejecutada...");
   registrarSensor();
+
 });

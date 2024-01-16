@@ -35,8 +35,7 @@ const obtenerCiudades = async (req, res) =>{
     };
 
 
-const actualizarWialon =  async (req, res) =>{
-    
+const actualizarWialon =  async (req, res) =>{    
     const {usuario, token} = req.body
 
      try {                          
@@ -53,14 +52,13 @@ const actualizarWialon =  async (req, res) =>{
 }
 
 
-
 const obtenerDatosOx = async (req, res) => {
     try {
       const {patente} = req.params
 
       const registros = await Sensores.findAll({
         where :{ patente },
-        limit: 200,
+        limit: 100,
         order: [['id', 'DESC']] 
       });
       return res.status(200).json(registros);
@@ -78,7 +76,7 @@ const obtenerAlertas = async (req, res) => {
 
       const registros = await LogSensores.findAll({
         where :{ patente },
-        limit: 500,
+        limit: 50,
         order: [['id', 'DESC']] 
       });
       return res.status(200).json(registros);
@@ -93,7 +91,7 @@ const obtenerAlertas = async (req, res) => {
 const obtenerResumenGPS = async (req, res) => {
   try {
     const registros = await ResumenGPS.findAll({   
-      order: [['fechaRegistro', 'DESC']] 
+      order: [['fechaGPS', 'DESC']] 
     });
     return res.status(200).json(registros);
 

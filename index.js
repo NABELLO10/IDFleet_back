@@ -13,7 +13,10 @@ import loginRoutes from "./routes/loginRoutes.js"
 import crudRoutes from "./routes/crudRoutes.js"
 import generalRoutes from "./routes/generalRoutes.js"
  
- import './controllers/procesos/sensoresController.js'  
+import './controllers/tareas/obtenerOX.js'  
+import "./controllers/tareas/logTablet.js";  
+import './controllers/tareas/obtenerUnidadesWialon.js'    
+
 
 //aqui se crea la aplicacion de express
 const app = express();
@@ -60,7 +63,7 @@ exportarModelos();
 
 
   //Utilizando cors para proteger la api ORIGINAL
-const dominiosPermitidos = [process.env.FRONTEND_URL, '127.0.0.1', 'http://localhost:5174']
+/* const dominiosPermitidos = [process.env.FRONTEND_URL, '127.0.0.1', 'http://localhost:5174']
 const corsOptions = {
     origin : function(origin, callback) {
         if (dominiosPermitidos.indexOf(origin) !== -1){
@@ -72,17 +75,17 @@ const corsOptions = {
     }
 }
 app.use(cors(corsOptions))  
-
+ */
 
 //  Cualquiera pueda soliictar
-//app.use(cors());
+app.use(cors());
 
-/*   app.use((req, res, next) => {
+   app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND_URL);
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     next();
-  }); */
+  }); 
    
 
   //ROUTES

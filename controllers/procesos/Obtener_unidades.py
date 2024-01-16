@@ -1,11 +1,9 @@
 import requests
 import json
 
-
 def unidades_hctec(token):
     # URL de la API para obtener un listado de unidades
     units_url = "https://hst-api.wialon.com/wialon/ajax.html?svc=core/search_items"
-
 
     #EndPoint API REST para Inicio de sesión con Token Asignado
     urlInicio = 'https://hst-api.wialon.com/wialon/ajax.html?svc=token/login'
@@ -28,7 +26,7 @@ def unidades_hctec(token):
         "force": 1,
         "flags": 1,
         "from": 0,
-        "to": 39
+        "to": 0
     }
     params_str = json.dumps(parametros)
 
@@ -39,18 +37,9 @@ def unidades_hctec(token):
         "sid": sid
     }
 
-
     units_response = requests.post(units_url, data=units_data)
     #Mostrar en formato JSON
     datosjson = units_response.json()
     cadena = datosjson["items"]
-    #datos = json.loads(cadena)
-    
-    #ids = []
 
-    #for datos in cadena:
-        #ids.append(datos["id"])
-
-
-    #print("id:", ids)
     return cadena

@@ -8,7 +8,7 @@ const registrarTransportista = async (req, res) => {
         const existe = await Transportistas.findOne({
             attributes: ['rut'],
             where:{
-                rut
+                rut, id_empresa
             }
         }) 
 

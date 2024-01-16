@@ -54,6 +54,7 @@ registrarCamion,
 editarCamion,
 eliminarCamion,
 obtenerCamiones,
+obtenerUnidadesWialon,
 obtenerTodosCamiones } from "../controllers/mantenedores/camionesController.js";
 
 // TIPO NOTIFICACION ------------------------------------------------------------------------//
@@ -118,7 +119,7 @@ router.get('/obtener-conductores/:id_empresa/:id_empresa_global', checkAuth, obt
 
 
 // ARRASTRES ------------------------------------------------------------------------//
-router.post("/arrastre", checkAuth, registrarArrastres)
+router.post("/registrarArrastre", checkAuth, registrarArrastres)
 router.put("/arrastre/:id", checkAuth, editarArrastre)
 router.delete("/arrastre/:id", checkAuth, eliminarArrastre)
 router.get('/obtener-arrastres/:id_empresa/:id_empresa_global', checkAuth, obtenerArrastres) 
@@ -129,6 +130,7 @@ router.post("/camion", checkAuth, registrarCamion)
 router.put("/camion/:id", checkAuth, editarCamion)
 router.delete("/camion/:id", checkAuth, eliminarCamion)
 router.get('/obtener-camiones/:id_empresa/:id_empresa_global', checkAuth, obtenerCamiones) 
+router.get('/unidades-wialon', checkAuth, obtenerUnidadesWialon) 
 router.get('/obtener-todoscamiones/:id_empresa/:id_empresa_global', checkAuth, obtenerTodosCamiones) 
 
 // TIPO NOTIFICACION ------------------------------------------------------------------------//

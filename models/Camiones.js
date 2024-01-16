@@ -31,13 +31,7 @@ const Camiones = db.define('mae_camiones', {
     },  
     est_activo:{
         type: Sequelize.INTEGER
-    },    
-    lat_actual:{
-        type: Sequelize.FLOAT
-    },    
-    lon_actual:{
-        type: Sequelize.FLOAT
-    },    
+    },       
     id_empresa:{
         type: Sequelize.INTEGER
     },
@@ -47,10 +41,15 @@ const Camiones = db.define('mae_camiones', {
     est_asignado:{
         type: Sequelize.INTEGER
     }, 
-    
+    id_wialon:{
+        type: Sequelize.INTEGER
+    },   
+    est_ox:{
+        type: Sequelize.INTEGER
+    },   
 },
 {
-    timestamps: false,
+    timestamps: true,
     tableName : 'mae_camiones'
 })
 
