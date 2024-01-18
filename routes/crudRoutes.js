@@ -19,6 +19,12 @@ editarPerfil,
 eliminarPerfil } from "../controllers/mantenedores/perfilesController.js";
 
 
+// EMPRESAS GENERALES ------------------------------------------------------------------------//
+import { 
+registrarEmpresaGral,
+editarEmpresaGral,
+eliminarEmpresaGral } from "../controllers/mantenedores/empresasController.js";
+
 // EMPRESAS ------------------------------------------------------------------------//
 import { 
 registrarEmpresa,
@@ -91,11 +97,16 @@ router.get('/obtener-perfil/:id_empresa', checkAuth, obtenerPerfiles)
 router.get('/obtener-perfil-activo/:id_empresa', checkAuth, obtenerPerfilesActivos) 
 router.get('/obtener-empresas', checkAuth, obtenerEmpresas) 
 
+
 // PERFLES ------------------------------------------------------------------------//
 router.post("/perfil", checkAuth, registrarPerfil)
 router.put("/perfil/:id", checkAuth, editarPerfil)
 router.delete("/perfil/:id", checkAuth, eliminarPerfil)
 
+// EMPRESAS GENERALES------------------------------------------------------------------------//
+router.post("/empresasGral", checkAuth, registrarEmpresaGral)
+router.put("/empresasGral/:id", checkAuth, editarEmpresaGral)
+router.delete("/empresasGral/:id", checkAuth, eliminarEmpresaGral)
 
 // EMPRESAS ------------------------------------------------------------------------//
 router.post("/empresas", checkAuth, registrarEmpresa)

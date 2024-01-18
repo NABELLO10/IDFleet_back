@@ -13,8 +13,8 @@ import loginRoutes from "./routes/loginRoutes.js"
 import crudRoutes from "./routes/crudRoutes.js"
 import generalRoutes from "./routes/generalRoutes.js"
  
-import './controllers/tareas/obtenerOX.js'  
-import "./controllers/tareas/logTablet.js";  
+import './controllers/tareas/obtenerOX.js'   
+/* import "./controllers/tareas/logTablet.js";   */
 import './controllers/tareas/obtenerUnidadesWialon.js'    
 
 

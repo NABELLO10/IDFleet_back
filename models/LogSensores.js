@@ -23,6 +23,9 @@ const LogSensores = db.define('log_sensores', {
     est_activo:{
         type: Sequelize.INTEGER
     },
+    id_transportista:{
+        type: Sequelize.INTEGER
+    },
 },
 {
     timestamps: false,

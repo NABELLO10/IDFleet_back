@@ -8,7 +8,7 @@ const registrarPerfil = async (req, res) => {
         const perfilExiste = await Perfiles.findOne({
             attributes: ['id', 'nom_perfil', 'est_activo', 'id_empresa'],
             where:{
-                nom_perfil : nom_perfil
+                nom_perfil : nom_perfil, id_empresa
             }
         }) 
 

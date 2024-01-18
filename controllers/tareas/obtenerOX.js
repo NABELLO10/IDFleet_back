@@ -47,7 +47,7 @@ const registrarSensor = async () => {
     .filter((r) => r.est_ox == 0)
     .map((camion) => camion.id_wialon);
 
-
+//DATOS GENERALES
   if (idWialonArrayGral.length > 0) {
     const unidadesStr = idWialonArrayGral.join(",");
     const scriptPath = join(__dirname, "datosGralCamiones.py");
@@ -75,6 +75,7 @@ const registrarSensor = async () => {
         fechaRegistro: new Date(),
       });
 
+           
       const existeResumen = await ResumenGPS.findAll({
         where: {
           id_wialon: r.idWialon,
@@ -113,7 +114,7 @@ const registrarSensor = async () => {
     });
   }
 
-  // Unir los valores en una cadena separada por comas
+  // DATOS PARA CAMIONES CON OXIGENACION¿
   const unidadesStr = idWialonArray.join(",");
   const scriptPath = join(__dirname, "datosOXCamiones.py");
 
@@ -214,48 +215,82 @@ const registrarSensor = async () => {
   });
 };
 
-async function guardarLog(data) {
+
+ async function guardarLog(data) {
   const empresaUnidad = await Camiones.findAll({
     attributes: ["id_empresa", "id_transportista"],
-    where: {
-      nom_patente: data.patente,
-    },
+     where: {
+      nom_patente: data.patente
+    }, 
   });
-  
+
   // Obteniendo el id_empresa e id_transportista
   const idEmpresa = empresaUnidad.map((unidad) => unidad.id_empresa);
   const idTransportista = empresaUnidad.map((unidad) => unidad.id_transportista);
   
+
   const fueraRango = await checkOxigenation(data, idEmpresa, idTransportista);
 
   if (Object.keys(fueraRango).length) {
     // Guarda en la tabla de logs
-    LogSensores.create({
-      patente: data.patente,
-      tipo: "Oxigenación GPS fuera de límites",
-      detalle: JSON.stringify(fueraRango),
-      fecha: new Date(),
-    });
+    idTransportista.map(transportista => {
+      LogSensores.create({
+        patente: data.patente,
+        tipo: "Oxigenación GPS fuera de límites",
+        detalle: JSON.stringify(fueraRango),
+        fecha: new Date(),
+        id_transportista : transportista
+      });
+    })
+
+
+    await ResumenGPS.update(
+      {
+        est_alerta: 1,
+      },
+      {
+        where: {
+          id_wialon: data.id_wialon,
+        },
+      }
+    );
   }
 
   const fueraRangotemp = await checkTemp(data, idEmpresa, idTransportista);
 
   if (Object.keys(fueraRangotemp).length) {
     // Guarda en la tabla de logs
-    LogSensores.create({
-      patente: data.patente,
-      tipo: "Temperatura GPS fuera de límites",
-      detalle: JSON.stringify(fueraRangotemp),
-      fecha: new Date(),
-    });
+    idTransportista.map(transportista => {
+      LogSensores.create({
+        patente: data.patente,
+        tipo: "Oxigenación GPS fuera de límites",
+        detalle: JSON.stringify(fueraRango),
+        fecha: new Date(),
+        id_transportista : transportista
+      });
+    })
+
+    await ResumenGPS.update(
+      {
+        est_alerta: 1,
+      },
+      {
+        where: {
+          id_wialon: data.id_wialon,
+        },
+      }
+    );
   }
-}
+} 
+
+
 
 
 async function checkOxigenation(data, empresaUnidad, idTransportista) {
   const tipoNotif = await TipoNotificacion.findOne({
     where: { id_cat_not: 1, id_empresa_sistema: empresaUnidad, id_transportista : idTransportista },
   });
+
 
 
   if (!tipoNotif) return {}; // Retorna un objeto vacío si no encuentra el tipo de notificación
@@ -267,13 +302,16 @@ async function checkOxigenation(data, empresaUnidad, idTransportista) {
     oxValues.push(parseFloat(data["ox" + i]));
   }
 
+  const valMin = parseFloat(tipoNotif.val_min)
+  const valMax =  parseFloat(tipoNotif.val_max)
+
   // Comparación de valores "ox"
   for (let i = 0; i < oxValues.length; i++) {
     let value = oxValues[i];
 
     if (
-      value < parseFloat(tipoNotif.val_min) ||
-      value > parseFloat(tipoNotif.val_max)
+      value < valMin ||
+      value > valMax
     ) {
       fueraRango["ox" + (i + 1)] = value;
     }
@@ -281,17 +319,22 @@ async function checkOxigenation(data, empresaUnidad, idTransportista) {
   return fueraRango;
 }
 
+
 async function checkTemp(data, empresaUnidad, idTransportista) {
   const tipoNotif = await TipoNotificacion.findOne({
     where: { id_cat_not: 2, id_empresa_sistema: empresaUnidad, id_transportista : idTransportista },
   });
+ 
 
   if (!tipoNotif) return {}; // Retorna un objeto vacío si no encuentra el tipo de notificación
   let fueraRango = {};
 
+  const valMin = parseFloat(tipoNotif.val_min)
+  const valMax =  parseFloat(tipoNotif.val_max)
+
   if (
-    data.temp < parseFloat(tipoNotif.val_min) ||
-    data.temp > parseFloat(tipoNotif.val_max)
+    data.temp < valMin ||
+    data.temp > valMax
   ) {
     fueraRango["temp"] = data.temp;
   }
@@ -300,7 +343,7 @@ async function checkTemp(data, empresaUnidad, idTransportista) {
 }
 
 // Programa la tarea para que se ejecute, por ejemplo, cada 3 minutos
-cron.schedule("*/1 * * * *", () => {
+cron.schedule("*/2 * * * *", () => {
   console.log("Tarea programada obtener OX siendo ejecutada...");
   registrarSensor();
 

@@ -20,6 +20,18 @@ async function guardarLogTablet() {
           detalle: `Sensor O${i} fuera de rango: ${valor}`,
           fecha: new Date(),
         });
+
+        await OxSchool.update(
+          {
+            est_alerta: 1,
+          },
+          {
+            where: {
+              PATENTE: record.PATENTE
+            },
+          }
+        );
+
       }
     }
   });

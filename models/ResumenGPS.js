@@ -78,7 +78,10 @@ const Sensores = db.define('mov_resumen_gps',{
     fechaRegistro: {
         type: Sequelize.DATE, // O Sequelize.DATETIME si también quieres la hora
         defaultValue: Sequelize.NOW
-    }
+    },
+    est_alerta:{
+        type: Sequelize.INTEGER
+    },
 },
 {
     timestamps: false,

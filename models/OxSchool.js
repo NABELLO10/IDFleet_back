@@ -76,6 +76,9 @@ const OxSchool = db.define('mox_ox_tablet', {
     lon_celular:{
         type: Sequelize.FLOAT
     },
+    est_alerta:{
+        type: Sequelize.INTEGER
+    },
 },
 {
     timestamps: false,

@@ -75,15 +75,14 @@ const eliminarCat = async (req, res) =>{
 const obtenerCat = async (req, res) => {
     try {
         const {id_empresa} = req.params
-        const tipos = await CatNotificacion.findAll({
+        const tipos = await CatNotificacion.findAll(/* {
             where:{id_empresa}
-        })
+        } */)
         return res.status(200).json(tipos)        
     } catch (error) {
         console.log(error)
     }
 }
-
 
 
 export{

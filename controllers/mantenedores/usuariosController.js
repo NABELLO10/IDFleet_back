@@ -17,7 +17,7 @@ const registrar = async (req,res) => {
             raw : true,
             where:{
                 'email' : email,
-                'id_empresa' : id_empresa
+               
             }
         })
   
