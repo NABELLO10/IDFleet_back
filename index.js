@@ -63,29 +63,13 @@ exportarModelos();
 
 
   //Utilizando cors para proteger la api ORIGINAL
-/* const dominiosPermitidos = [process.env.FRONTEND_URL, '127.0.0.1', 'http://localhost:5174']
-const corsOptions = {
-    origin : function(origin, callback) {
-        if (dominiosPermitidos.indexOf(origin) !== -1){
-            //Origen esta permitido
-            callback(null, true)
-        }else{
-            callback(new Error('No permitido por Cors'))            
-        }
-    }
-}
-app.use(cors(corsOptions))  
- */
 
-//  Cualquiera pueda soliictar
-app.use(cors());
-
-   app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', process.env.FRONTEND_URL);
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    next();
-  }); 
+  const corsOptions = {
+    origin: process.env.FRONTEND_URL, // Asegúrate de que FRONTEND_URL esté correctamente definido en tu archivo .env
+    methods: 'GET, POST, PUT, DELETE',
+    allowedHeaders: 'Content-Type, Authorization',
+  };
+  app.use(cors(corsOptions));
    
 
   //ROUTES

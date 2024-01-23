@@ -19,10 +19,10 @@ const registrar = async (req,res) => {
                 'email' : email,
                
             }
-        })
+        })       
   
         if(existeUsuario){
-            const error = new Error('Usuario ya Existe para la empresa seleccionada')
+            const error = new Error('Usuario ya existe en la plataforma')
             return res.status(400).json({msg : error.message})
         }
          
@@ -57,6 +57,21 @@ const actualizarUsuario = async (req, res) =>{
     const {nombre, id_empresa, email, id_perfil, est_activo } = req.body
    
     try {
+
+        const existeUsuario1 = await Usuarios.findOne({
+            attributes: ['id', 'nom_usuario', 'password', 'email', 'id_empresa', 'token', 'confirmado', 'id_perfil', 'est_activo', 'user_add', 'fec_add'],
+            raw : true,
+            where:{
+                'email' : email,
+               
+            }
+        })
+  
+        if(existeUsuario1){
+            const error = new Error('Correo ya existe en la plataforma')
+            return res.status(400).json({msg : error.message})
+        }
+
         
         const usuarioExiste =  await Usuarios.findByPk(id, {attributes: ['id', 'nom_usuario', 'password', 'email', 'id_empresa', 'token', 'confirmado', 'id_perfil', 'est_activo', 'user_add', 'fec_add']})
 
