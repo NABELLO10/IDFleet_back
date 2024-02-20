@@ -26,6 +26,9 @@ const LogSensores = db.define('log_sensores', {
     id_transportista:{
         type: Sequelize.INTEGER
     },
+    fechaRegistro:{
+        type: Sequelize.STRING(100)
+    },
 },
 {
     timestamps: false,

@@ -1,11 +1,14 @@
 // Este es tu controlador, por ejemplo, sensorController.js
-import OxSchool from "../../models/OxSchool.js";
+import ResumenTablet from "../../models/ResumenTablet.js";
 import cron from "node-cron";
 import LogSensores from "../../models/LogSensores.js";
+import emailNotificaciones from "../../helpers/emailNotificaciones.js";
+import moment from 'moment-timezone';
 
+const fechaChile = moment.tz(new Date(), 'America/Santiago').format('YYYY-MM-DD HH:mm:ss');
 
 async function guardarLogTablet() { 
-  const records = await OxSchool.findAll();
+  const records = await ResumenTablet.findAll();
 
   records.forEach(async (record) => {
     // Revisa cada valor (O1 a O10)
@@ -14,14 +17,24 @@ async function guardarLogTablet() {
       if (valor > record.RA || valor < record.RB) {
         let patenteLimpia = record.PATENTE.replace(/[.-]/g, '');
 
-        await LogSensores.create({
+        const resultado = await LogSensores.create({
           patente: patenteLimpia,
-          tipo: "Oxigenacion TABLET fuera de límites",
+          tipo: "Oxigenación TABLET fuera de límites",
           detalle: `Sensor O${i} fuera de rango: ${valor}`,
-          fecha: new Date(),
+          fecha: fechaChile,
+          fechaRegistro : new Date().toISOString().split('T')[0],
         });
 
-        await OxSchool.update(
+       /*  emailNotificaciones({
+          des : resultado.detalle,
+          fecha : fechaChile,
+          tipo_alerta: "OXIGENACIÓN",
+          cat_alerta : 0,
+          patente : record.PATENTE,
+          origen: "Tablet"
+        })  */
+               
+        await ResumenTablet.update(
           {
             est_alerta: 1,
           },
@@ -31,14 +44,13 @@ async function guardarLogTablet() {
             },
           }
         );
-
       }
     }
   });
 }
 
 // Programa la tarea para que se ejecute, por ejemplo, cada 2 minutos
-cron.schedule("*/2 * * * *", () => {
-  console.log("Tarea programada obtener log tablet siendo ejecutada...");
+cron.schedule("*/5 * * * *", () => {
+  console.log("Tarea programada  LOG TABLET siendo ejecutada...");
   guardarLogTablet()
 });

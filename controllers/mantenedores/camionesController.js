@@ -4,10 +4,11 @@ import UnidadesWialon from "../../models/UnidadesWialon.js"
 import Arrastres from "../../models/Arrastres.js"
 import Transportistas from "../../models/Transportistas.js"
 import EmpresasSistema from "../../models/EmpresasSistema.js"
+import Conductores from "../../models/Conductores.js"
 
 
 const registrarCamion = async (req, res) => {
-    const {id_transportista, id_arrastre, nom_patente, fec_rev_tecnica, fec_per_circulacion, fec_seguro, est_activo, id_empresa, id_empresa_global, est_asignado, id_wialon, est_ox}  = req.body
+    const {id_transportista, id_arrastre, nom_patente, fec_rev_tecnica, fec_per_circulacion, fec_seguro, est_activo, id_empresa, id_empresa_global, est_asignado, id_wialon, est_ox, id_conductor, est_temp}  = req.body
 
     try {
         const existe = await Camiones.findOne({
@@ -24,7 +25,7 @@ const registrarCamion = async (req, res) => {
         }
                          
         await Camiones.create({
-            id_transportista,id_arrastre,nom_patente, fec_rev_tecnica, fec_per_circulacion, fec_seguro, est_activo , id_empresa, id_empresa_global, est_asignado, id_wialon, est_ox
+            id_transportista,id_arrastre,nom_patente, fec_rev_tecnica, fec_per_circulacion, fec_seguro, est_activo , id_empresa, id_empresa_global, est_asignado, id_wialon, est_ox, id_conductor, est_temp
         })      
                 
         res.status(200).json({msg: "Camión Registrado!"})
@@ -38,32 +39,11 @@ const registrarCamion = async (req, res) => {
 
 const editarCamion =  async (req, res) =>{
     const {id} = req.params
-    const {id_transportista, id_arrastre, nom_patente, fec_rev_tecnica, fec_per_circulacion, fec_seguro, est_activo, lat_actual, lon_actual, id_empresa, id_wialon, est_ox} = req.body
+    const {id_transportista, id_arrastre, nom_patente, fec_rev_tecnica, fec_per_circulacion, fec_seguro, est_activo, lat_actual, lon_actual, id_empresa, id_wialon, est_ox, id_conductor , est_temp} = req.body
 
     try {     
         await Camiones.update({
-            id_transportista,id_arrastre,nom_patente, fec_rev_tecnica, fec_per_circulacion, fec_seguro, est_activo, lat_actual, lon_actual, id_empresa, id_wialon, est_ox
-        },{
-            where:{
-                id : id
-            }
-        })    
-               
-         res.status(200).json({msg: "Camión Actualizado"})
-
-    } catch (error) {
-        console.log(error)            
-    }      
-}
-
-const asignarCamion =  async (req, res) =>{
-    const {id} = req.params
-    const {est_asignado} = req.body
-
-    try {
-     
-        await Camiones.update({
-            est_asignado
+            id_transportista,id_arrastre,nom_patente, fec_rev_tecnica, fec_per_circulacion, fec_seguro, est_activo, lat_actual, lon_actual, id_empresa, id_wialon, est_ox, id_conductor, est_temp
         },{
             where:{
                 id : id
@@ -81,16 +61,13 @@ const asignarCamion =  async (req, res) =>{
 const eliminarCamion = async (req, res) =>{
     const {id} = req.params
 
-    try {    
-    
+    try {        
         await Camiones.destroy({
             where:{
                 id : id
             }
-        })
-        
+        })        
          res.status(200).json({msg: "Camión Eliminado"})
-
     } catch (error) {
         console.log(error)    
     }   
@@ -102,7 +79,7 @@ const obtenerCamiones = async (req, res) => {
         const { id_empresa, id_empresa_global } = req.params;
         const camiones = await Camiones.findAll({
             where: { id_empresa, id_empresa_global },
-            include: [{model : EmpresasSistema}, {model : Transportistas}, {model : Arrastres}]
+            include: [{model : EmpresasSistema}, {model : Transportistas}, {model : Arrastres}, {model : Conductores}]
         });
         return res.status(200).json(camiones);        
      } catch (error) {

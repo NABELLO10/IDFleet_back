@@ -4,6 +4,8 @@ import db from "../config/db.js";
 import Transportista from "./Transportistas.js";
 import Arrastres from "./Arrastres.js";
 import EmpresasSistema from "./EmpresasSistema.js";
+import Conductores from "./Conductores.js";
+
 
 const Camiones = db.define('mae_camiones', {
     id: {
@@ -15,7 +17,8 @@ const Camiones = db.define('mae_camiones', {
         type: Sequelize.INTEGER
     },   
     id_arrastre:{
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        allowNull: true
     },   
     nom_patente:{
         type: Sequelize.STRING
@@ -47,6 +50,13 @@ const Camiones = db.define('mae_camiones', {
     est_ox:{
         type: Sequelize.INTEGER
     },   
+    id_conductor:{
+        type: Sequelize.INTEGER,
+        allowNull: true
+    }, 
+    est_temp:{
+        type: Sequelize.INTEGER
+    }, 
 },
 {
     timestamps: true,
@@ -56,6 +66,7 @@ const Camiones = db.define('mae_camiones', {
 Camiones.belongsTo(Transportista, {foreignKey : "id_transportista"})
 Camiones.belongsTo(Arrastres, {foreignKey : "id_arrastre"})
 Camiones.belongsTo(EmpresasSistema, {foreignKey : "id_empresa"})
+Camiones.belongsTo(Conductores, {foreignKey : "id_conductor"})
 
 
 export default Camiones;

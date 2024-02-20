@@ -2,8 +2,10 @@ import Ciudades from "../models/Ciudades.js"
 import Token from "../models/Token.js"
 import Sensores from "../models/Sensores.js"
 import ResumenGPS from "../models/ResumenGPS.js"
-import OxSchool from "../models/OxSchool.js"
+import ResumenTablet from "../models/ResumenTablet.js"
 import LogSensores from "../models/LogSensores.js"
+import { Op } from "sequelize"
+import moment from "moment";
 
 
 const obtenerCiudades = async (req, res) =>{
@@ -105,7 +107,7 @@ const obtenerResumenGPS = async (req, res) => {
 
 const obtenerDatosSchool = async (req, res) => {
   try {
-    const registros = await OxSchool.findAll({
+    const registros = await ResumenTablet.findAll({
       limit: 200,
       order: [['id', 'DESC']] 
     });
@@ -117,6 +119,47 @@ const obtenerDatosSchool = async (req, res) => {
   }
 };
 
+
+const obtenerLog = async (req, res) => {
+  try { 
+    const {patente, desde, hasta} = req.params
+
+    const registros = await LogSensores.findAll({
+        where :{ patente,
+          fechaRegistro: {
+          [Op.between]: [desde, hasta],
+          } }    
+      });
+     
+      return res.status(200).json(registros);
+
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: "Error interno del servidor." });
+    } 
+  }
+
+  const obtenerDatosOxFechas = async (req, res) => {
+     try { 
+      const {patente, desde, hasta} = req.params
+      
+      const registros = await Sensores.findAll({
+        where :{ patente,
+          fec_gps: {
+            [Op.between]: [desde, hasta] 
+          } },
+          order: [['id', 'ASC']]     
+      });
+      
+      return res.status(200).json(registros);
+
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: "Error interno del servidor." });
+    } 
+};
+
+
 export {
     obtenerCiudades,
     actualizarWialon,
@@ -124,6 +167,8 @@ export {
     obtenerDatosOx,
     obtenerResumenGPS,
     obtenerDatosSchool,
-    obtenerAlertas
+    obtenerAlertas,
+    obtenerDatosOxFechas,
+    obtenerLog
 
 }

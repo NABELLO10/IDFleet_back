@@ -70,10 +70,10 @@ const Sensores = db.define('mov_oxigenacion',{
         type: Sequelize.STRING(200)
     },
     fecha:{
-        type: Sequelize.STRING(20)
+        type: Sequelize.STRING(200)
     },
     time:{
-        type: Sequelize.STRING(10)
+        type: Sequelize.STRING(200)
     },
     fechaRegistro: {
         type: Sequelize.DATE, // O Sequelize.DATETIME si también quieres la hora
@@ -81,6 +81,9 @@ const Sensores = db.define('mov_oxigenacion',{
     },
     est_alerta:{
         type: Sequelize.INTEGER
+    },
+    fec_gps:{
+        type: Sequelize.STRING(200)
     }
 },
 {

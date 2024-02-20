@@ -1,7 +1,7 @@
 import { DataTypes, Sequelize } from "sequelize";
 import db from "../config/db.js";
 
-const OxSchool = db.define('mov_ox_tablet', {
+const ResumenTablet = db.define('mov_resumen_tablet', {
     ID: {
         type: Sequelize.INTEGER, 
         primaryKey:true, 
@@ -82,8 +82,8 @@ const OxSchool = db.define('mov_ox_tablet', {
 },
 {
     timestamps: false,
-    tableName: 'mov_ox_tablet'
+    tableName: 'mov_resumen_tablet'
 })
 
 
-export default OxSchool
+export default ResumenTablet

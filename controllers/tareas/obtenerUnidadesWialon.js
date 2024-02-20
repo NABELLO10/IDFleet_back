@@ -30,6 +30,7 @@ const registrarUnidades = async () => {
     console.error(`exec error: ${error}`);
     return;
   }
+  
 
   arrayResultado.map(async (r) => {
 
@@ -46,14 +47,30 @@ const registrarUnidades = async () => {
         mu: r.mu,
         longitud: r.Longitud,
         uacl: r.uacl,
-        altitud: r.Altitud    
+        altitud: r.Altitud,
       });
+    }else{
+      await UnidadesWialon.update(
+        {
+          nm: r.nm,
+          mu: r.mu,
+          longitud: r.Longitud,
+          uacl: r.uacl,
+          altitud: r.Altitud,
+        },
+        {
+          where: {
+            id_wialon: r.id,
+          },
+        }
+      );  
+
     }
   });
 };
 
 // cada 15 minutos
-cron.schedule("*/15 * * * *", () => {
+cron.schedule("*/10 * * * *", () => {
   console.log("Tarea obtener unidades siendo ejecutada...");
   registrarUnidades();
 });
