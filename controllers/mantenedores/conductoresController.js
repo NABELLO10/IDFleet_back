@@ -1,5 +1,8 @@
 import Conductores from "../../models/Conductores.js"
+import generarID from "../../helpers/generarID.js"
+import emailRegistro from "../../helpers/emailRegistro.js"
 
+import Usuarios from "../../models/Usuarios.js"
 
 const registrarConductor = async (req, res) => {
     const {rut, nombre, ape_paterno, ape_materno, fono, email, est_activo, id_empresa, id_empresa_global} = req.body
@@ -8,7 +11,8 @@ const registrarConductor = async (req, res) => {
         const existe = await Conductores.findOne({
             attributes: ['rut'],
             where:{
-                rut
+                rut,
+                id_empresa
             }
         }) 
 
@@ -20,6 +24,23 @@ const registrarConductor = async (req, res) => {
         await Conductores.create({
             rut, nombre, ape_paterno, ape_materno, fono, email, est_activo, id_empresa, id_empresa_global
         })      
+
+      /*   const nuevoUsuario = await Usuarios.create({
+            nom_usuario : nombre,
+            password: password ? password : generarID(),
+            email : email,
+            id_empresa: id_empresa,
+            id_perfil: id_perfil,
+            token: generarID(),
+            est_activo : 1,           
+        })     
+
+        emailRegistro({
+            nombre: nombre + " " + ape_paterno,
+            email,
+            token : nuevoUsuario.token,
+        })   */              
+
                 
         res.status(200).json({msg: "Conductor Registrado!"})
 

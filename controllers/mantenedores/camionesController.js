@@ -15,7 +15,8 @@ const registrarCamion = async (req, res) => {
             attributes: ['id'],
             where:{
                 nom_patente,
-                id_empresa
+                id_empresa,
+                id_transportista
             }
         }) 
     

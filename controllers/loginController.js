@@ -3,6 +3,7 @@ import generarJWT from "../helpers/generarJWT.js"
 import generarID from "../helpers/generarID.js"
 import emailOlvidePassword from "../helpers/emailOlvidePassword.js"
 import Usuarios from "../models/Usuarios.js"
+import Perfiles from "../models/Perfiles.js"
 
 const confirmar = async (req,res) => {
     try {
@@ -62,6 +63,14 @@ const login = async (req,res) => {
             const error = new Error('Contraseña Invalida')
             return res.status(400).json({msg : error.message})
         }
+
+        const infoPerfil = await Perfiles.findOne({
+            attributes: ['nom_perfil'],
+            where : {
+                "id" : usuarioLogin.id_perfil
+            }
+        })
+
         
         res.json({
             id : usuarioLogin.id,
@@ -70,7 +79,9 @@ const login = async (req,res) => {
             token: generarJWT(usuarioLogin.id),
             id_empresa : usuarioLogin.id_empresa,
             id_rol : usuarioLogin.id_rol,
-            est_activo : usuarioLogin.est_activo
+            est_activo : usuarioLogin.est_activo,
+            id_perfil : usuarioLogin.id_perfil,
+            nom_perfil : infoPerfil.nom_perfil
         })   
                
 

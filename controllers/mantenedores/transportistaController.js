@@ -99,6 +99,8 @@ const obtenerTransportistasActivos = async (req, res) => {
 }
 
 
+
+
 export{
     registrarTransportista,
     editarTransportista,

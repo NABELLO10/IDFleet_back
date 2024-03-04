@@ -26,12 +26,24 @@ const LogSensores = db.define('log_sensores', {
     id_transportista:{
         type: Sequelize.INTEGER
     },
-    fechaRegistro:{
+    id_empresa:{
+        type: Sequelize.INTEGER
+    },
+    fecGPS:{
+        type: Sequelize.STRING(100)
+    },
+    fecAlerta:{
+        type: Sequelize.STRING(100)
+    },
+    est_revisado:{
+        type: Sequelize.INTEGER
+    },
+    user_revisado:{
         type: Sequelize.STRING(100)
     },
 },
 {
-    timestamps: false,
+    timestamps: true,
     tableName: 'log_sensores'
 })
 

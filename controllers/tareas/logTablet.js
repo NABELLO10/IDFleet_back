@@ -23,6 +23,8 @@ async function guardarLogTablet() {
           detalle: `Sensor O${i} fuera de rango: ${valor}`,
           fecha: fechaChile,
           fechaRegistro : new Date().toISOString().split('T')[0],
+          fecGPS : record.DATE + " " + record.TIME,
+          fecAlerta : record.DATE,
         });
 
        /*  emailNotificaciones({
@@ -50,7 +52,7 @@ async function guardarLogTablet() {
 }
 
 // Programa la tarea para que se ejecute, por ejemplo, cada 2 minutos
-cron.schedule("*/5 * * * *", () => {
+cron.schedule("*/6 * * * *", () => {
   console.log("Tarea programada  LOG TABLET siendo ejecutada...");
   guardarLogTablet()
 });

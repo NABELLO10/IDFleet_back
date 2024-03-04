@@ -57,6 +57,9 @@ const Camiones = db.define('mae_camiones', {
     est_temp:{
         type: Sequelize.INTEGER
     }, 
+    fecGPS:{
+        type: Sequelize.STRING(200)
+    }, 
 },
 {
     timestamps: true,

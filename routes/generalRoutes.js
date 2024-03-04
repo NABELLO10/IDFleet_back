@@ -12,7 +12,14 @@ import {
         obtenerDatosSchool,
         obtenerAlertas,
         obtenerDatosOxFechas,
-        obtenerLog
+        obtenerLog,
+        obtenerLogConductor,
+        logRevisado,
+        revisarTodos,
+        obtenerLogConductor2,
+        inicioConductor,
+        obtenerConductorActivo,
+        enviarGPS
              } from "../controllers/generalController.js";
 
 
@@ -26,12 +33,20 @@ router.get('/datos-ox-fechas/:patente/:desde/:hasta', checkAuth, obtenerDatosOxF
 router.get('/alertas/:patente', checkAuth, obtenerAlertas)
 router.get('/datos-tablet', checkAuth, obtenerDatosSchool)
 router.get('/resumenGPS', checkAuth, obtenerResumenGPS)
-router.get('/obtenerLog/:patente/:desde/:hasta', checkAuth, obtenerLog)
+router.get('/obtenerLog/:patente/:desde/:hasta/:empresa/:transportista', checkAuth, obtenerLog)
+router.get('/obtenerLogConductor/:empresa/:transportista/:patente', checkAuth, obtenerLogConductor)
 
 
 router.get('/listarUnidadesPY', checkAuth, listarUnidadesPY)
 router.get('/datosOx', checkAuth, datosOxPY)
 router.get('/tControl', checkAuth, tControl)
+
+router.put('/revisarLog/:id', logRevisado)
+router.put('/revisarTodos/:patente',  revisarTodos)
+router.get('/obtenerLogConductor2/:patente',  obtenerLogConductor2)
+router.post('/inicioConductor',  inicioConductor)
+router.post('/obtenerConductorActivo/:patente/:rut',  obtenerConductorActivo)
+router.post('/enviarGPS',  enviarGPS)
 
 
 
