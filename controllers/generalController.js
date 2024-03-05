@@ -6,6 +6,7 @@ import ResumenTablet from "../models/ResumenTablet.js"
 import LogSensores from "../models/LogSensores.js"
 import SesionConductores from "../models/SesionConductores.js"
 import GPSTablet from "../models/GPSTablet.js"
+import OxSchool from "../models/OxSchool.js"
 import { Op } from "sequelize"
 import moment from "moment";
 
@@ -107,11 +108,11 @@ const obtenerResumenGPS = async (req, res) => {
 
 
 
-const obtenerDatosSchool = async (req, res) => {
+const obtenerResumenTablet = async (req, res) => {
   try {
     const registros = await ResumenTablet.findAll({
-      limit: 200,
-      order: [['id', 'DESC']] 
+      //limit: 200,
+      //order: [['id', 'DESC']] 
     });
     return res.status(200).json(registros);
 
@@ -130,6 +131,26 @@ const obtenerLog = async (req, res) => {
         where :{ patente,
           id_empresa : empresa,
           id_transportista : transportista,
+          fecAlerta: {
+          [Op.between]: [desde, hasta],
+          } }    
+      });
+   
+
+      return res.status(200).json(registros);
+
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: "Error interno del servidor." });
+    } 
+  }
+
+const obtenerLogTablet = async (req, res) => {
+  try { 
+    const {patente, desde, hasta, empresa, transportista} = req.params
+
+    const registros = await LogSensores.findAll({
+        where :{ patente,          
           fecAlerta: {
           [Op.between]: [desde, hasta],
           } }    
@@ -186,6 +207,27 @@ const obtenerLog = async (req, res) => {
           } },
           order: [['id', 'ASC']]     
       });
+      
+      return res.status(200).json(registros);
+
+    } catch (error) {
+      console.log(error);
+      return res.status(500).json({ message: "Error interno del servidor." });
+    } 
+};
+
+const obtenerDatosTabletFechas = async (req, res) => {
+     try { 
+      const {patente, desde, hasta} = req.params
+      
+      
+      const registros = await OxSchool.findAll({
+        where :{ PATENTE: patente,
+          DATE: {
+            [Op.between]: [desde, hasta] 
+          } },
+          order: [['id', 'ASC']]     
+      });      
       
       return res.status(200).json(registros);
 
@@ -337,7 +379,7 @@ export {
     obtenerTokenWialon,
     obtenerDatosOx,
     obtenerResumenGPS,
-    obtenerDatosSchool,
+    obtenerResumenTablet,
     obtenerAlertas,
     obtenerDatosOxFechas,
     obtenerLog,
@@ -347,5 +389,7 @@ export {
     obtenerLogConductor2,
     inicioConductor,
     obtenerConductorActivo,
-    enviarGPS
+    enviarGPS,
+    obtenerDatosTabletFechas,
+    obtenerLogTablet
 }
