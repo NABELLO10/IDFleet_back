@@ -10,7 +10,7 @@ import LogSensores from "../../models/LogSensores.js";
 import { Op, where } from "sequelize";
 import Sequelize from "sequelize";
 import { promisify } from "util";
-import moment from "moment"
+import moment from "moment";
 
 import { fileURLToPath } from "url";
 import { dirname, join } from "path"; //
@@ -39,33 +39,33 @@ const registrarSensor = async () => {
     },
   });
 
-
   const idWialonArray = wialonCamiones
-  .filter((r) => r.est_ox == 1 || r.est_temp == 1)
-  .reduce((accumulator, camion) => {
-    // Verifica si el camión actual ya está en el acumulador basándose en idWi
-    const yaExiste = accumulator.some(item => item.idWi === camion.id_wialon && item.idTra == camion.id_transportista);
-    if (!yaExiste) {
-      // Si no existe, lo agrega al acumulador
-      accumulator.push({
-        patente: camion.nom_patente,
-        idWi: camion.id_wialon,
-        idTra: camion.id_transportista,
-        idEmp: camion.id_empresa,
-        fecGPS: camion.fecGPS
-      });
-    }
-    return accumulator;
-  }, []); // Inicia con un array vacío como acumulador
+    .filter((r) => r.est_ox == 1 || r.est_temp == 1)
+    .reduce((accumulator, camion) => {
+      // Verifica si el camión actual ya está en el acumulador basándose en idWi
+      const yaExiste = accumulator.some(
+        (item) =>
+          item.idWi === camion.id_wialon &&
+          item.idTra == camion.id_transportista
+      );
+      if (!yaExiste) {
+        // Si no existe, lo agrega al acumulador
+        accumulator.push({
+          patente: camion.nom_patente,
+          idWi: camion.id_wialon,
+          idTra: camion.id_transportista,
+          idEmp: camion.id_empresa,
+          fecGPS: camion.fecGPS,
+        });
+      }
+      return accumulator;
+    }, []); // Inicia con un array vacío como acumulador
 
-
-
-//DATOS OX y TEMP
+  //DATOS OX y TEMP
   if (idWialonArray.length > 0) {
- 
-    const unidadesStr = idWialonArray.map(obj => obj.idWi).join(",");
+    const unidadesStr = idWialonArray.map((obj) => obj.idWi).join(",");
     const scriptPath = join(__dirname, "datosOXCamiones.py");
-  
+
     try {
       const resultado = await execAsync(
         `python ${scriptPath} ${token.token} ${unidadesStr}`
@@ -75,8 +75,18 @@ const registrarSensor = async () => {
       console.error(`exec error: ${error}`);
       return;
     }
-     
+
     arraySensores.map(async (r) => {
+
+      let valor13 = r.Valores[15] ? r.Valores[15].toString() : "";
+      let valor14 = r.Valores[14] ? r.Valores[14].toString() : "";
+      let valor15 = r.Valores[13] ? r.Valores[13].toString() : "";
+
+      // Concatenar los valores con un separador específico, por ejemplo, un espacio
+      let fechaConcatenada = [valor13, valor14, valor15]
+        .filter((v) => v)
+        .join(" ");
+
       const resultado = await Sensores.create({
         patente: r.Patente,
         fechaGPS: r.FechaGPS,
@@ -94,23 +104,24 @@ const registrarSensor = async () => {
         ox7: r.Valores[6],
         ox8: r.Valores[7],
         ox9: r.Valores[8],
-        temp: r.Valores[9],
-        fecha: r.Valores[10],
-        time: r.Valores[11],
-        fec_gps: moment(r.FechaGPS).format('YYYY-MM-DD')
+        ox10: r.Valores[9],
+        temp: r.Valores[10],
+        ox11: r.Valores[11],
+        ox12: r.Valores[12],
+        fecha: fechaConcatenada, // Usamos la variable concatenada
+        fec_gps: moment(r.FechaGPS).format("YYYY-MM-DD"),
       });
-    
-      const camionOX = await Camiones.findAll({          
-        where: { id_wialon : r.idWialon, est_activo : 1 },          
-      });     
-    
+
+      const camionOX = await Camiones.findAll({
+        where: { id_wialon: r.idWialon, est_activo: 1 },
+      });
+
       const existeResumen = await ResumenGPS.findAll({
         where: {
           id_wialon: r.idWialon,
         },
       });
 
-  
       if (existeResumen.length > 0) {
         await ResumenGPS.update(
           {
@@ -129,12 +140,14 @@ const registrarSensor = async () => {
             ox7: r.Valores[6],
             ox8: r.Valores[7],
             ox9: r.Valores[8],
-            temp: r.Valores[9],
-            fecha: r.Valores[10],
-            time: r.Valores[11],
+            ox10: r.Valores[9],
+            temp: r.Valores[10],
+            ox11: r.Valores[11],
+            ox12: r.Valores[12],
+            fecha: fechaConcatenada, 
             fechaRegistro: new Date(),
-            est_ox : camionOX[0].dataValues.est_ox,
-            est_temp : camionOX[0].dataValues.est_temp,
+            est_ox: camionOX[0].dataValues.est_ox,
+            est_temp: camionOX[0].dataValues.est_temp,
           },
           {
             where: {
@@ -160,24 +173,26 @@ const registrarSensor = async () => {
           ox7: r.Valores[6],
           ox8: r.Valores[7],
           ox9: r.Valores[8],
-          temp: r.Valores[9],
-          fecha: r.Valores[10],
-          time: r.Valores[11],
+          ox10: r.Valores[9],
+          temp: r.Valores[10],
+          ox11: r.Valores[11],
+          ox12: r.Valores[12],
+          fecha: fechaConcatenada, 
           fechaRegistro: new Date(),
-          est_ox : camionOX[0].dataValues.est_ox,
-          est_temp : camionOX[0].dataValues.est_temp,
+          est_ox: camionOX[0].dataValues.est_ox,
+          est_temp: camionOX[0].dataValues.est_temp,
         });
       }
     });
 
-    idWialonArray.map(async obj => {
+    idWialonArray.map(async (obj) => {
       const existeResumen = await ResumenGPS.findOne({
         where: {
           id_wialon: obj.idWi,
         },
       });
 
-      if (existeResumen){
+      if (existeResumen) {
         const data = {
           patente: obj.patente,
           idWialon: obj.idWi,
@@ -189,70 +204,68 @@ const registrarSensor = async () => {
 
         guardarLog(data);
       }
-    
-    } )
-  } 
+    });
+  }
 };
 
- async function guardarLog(data) {
- 
+async function guardarLog(data) {
   const fueraRango = await checkOxigenation(data);
 
-  if (Object.keys(fueraRango).length) {    
-      LogSensores.create({
-        patente: data.patente.replace(/-/g, '').toUpperCase(),
-        tipo: "Oxigenación GPS fuera de límites",
-        detalle: JSON.stringify(fueraRango),
-        fecha: new Date(),
-        id_transportista : data.idTransportista,
-        id_empresa : data.idEmpresa,
-        fecGPS : data.datosOX.dataValues.fechaGPS, 
-        fecAlerta : moment(data.datosOX.dataValues.fechaGPS).format('YYYY-MM-DD')   
-    })     
+  if (Object.keys(fueraRango).length) {
+    LogSensores.create({
+      patente: data.patente.replace(/-/g, "").toUpperCase(),
+      tipo: "Oxigenación GPS fuera de límites",
+      detalle: JSON.stringify(fueraRango),
+      fecha: new Date(),
+      id_transportista: data.idTransportista,
+      id_empresa: data.idEmpresa,
+      fecGPS: data.datosOX.dataValues.fechaGPS,
+      fecAlerta: moment(data.datosOX.dataValues.fechaGPS).format("YYYY-MM-DD"),
+    });
   }
-
 
   async function checkOxigenation(data) {
     const tipoNotif = await TipoNotificacion.findOne({
-      where: { id_cat_not: 1, id_empresa_sistema: data.idEmpresa, id_transportista : data.idTransportista },
+      where: {
+        id_cat_not: 1,
+        id_empresa_sistema: data.idEmpresa,
+        id_transportista: data.idTransportista,
+      },
     });
-    
+
     if (!tipoNotif) return {}; // Retorna un objeto vacío si no encuentra el tipo de notificación
     let fueraRango = {};
-  
+
     // Extracción de valores "ox"
     let oxValues = [];
-    for (let i = 1; i <= 10; i++) {      
+    for (let i = 1; i <= 10; i++) {
       const oxValue = data.datosOX.dataValues["ox" + i];
 
       if (oxValue !== undefined && !isNaN(parseFloat(oxValue))) {
         oxValues.push(parseFloat(oxValue));
       }
     }
-  
-    const valMin = parseFloat(tipoNotif.val_min)
-    const valMax =  parseFloat(tipoNotif.val_max)
-  
+
+    const valMin = parseFloat(tipoNotif.val_min);
+    const valMax = parseFloat(tipoNotif.val_max);
+
     // Comparación de valores "ox"
     for (let i = 0; i < oxValues.length; i++) {
       let value = oxValues[i];
-  
-      if (
-        value < valMin ||
-        value > valMax
-      ) {
+
+      if (value < valMin || value > valMax) {
         fueraRango["ox" + (i + 1)] = value;
       }
     }
     return fueraRango;
   }
-  
-// temperatura
+
+  // temperatura
   const fueraRangotemp = await checkTemp(data);
 
   if (Object.keys(fueraRangotemp).length) {
     LogSensores.create({
-      patente: data.patente.replace(/-/g, '').toUpperCase(),
+      patente: data.patente.replace(/-/g, "").toUpperCase(),
       tipo: "Temperatura GPS fuera de límites",
       detalle: JSON.stringify(fueraRangotemp),
       fec_add: new Date(),
@@ -261,36 +274,39 @@ const registrarSensor = async () => {
       fecGPS: data.datosOX.dataValues.fechaGPS,
       fecAlerta: moment(data.datosOX.dataValues.fechaGPS).format("YYYY-MM-DD"),
     });
-  }  
-} 
+  }
+}
 
 async function checkTemp(data) {
   const tipoNotif = await TipoNotificacion.findOne({
-    where: { id_cat_not: 2, id_empresa_sistema: data.idEmpresa, id_transportista : data.idTransportista },
+    where: {
+      id_cat_not: 2,
+      id_empresa_sistema: data.idEmpresa,
+      id_transportista: data.idTransportista,
+    },
   });
- 
+
   if (!tipoNotif) return {}; // Retorna un objeto vacío si no encuentra el tipo de notificación
   let fueraRango = {};
 
-  const valMin = parseFloat(tipoNotif.val_min)
-  const valMax =  parseFloat(tipoNotif.val_max)
+  const valMin = parseFloat(tipoNotif.val_min);
+  const valMax = parseFloat(tipoNotif.val_max);
 
-  if (data.datosOX.dataValues.temp < valMin || data.datosOX.dataValues.temp > valMax) {
+  if (
+    data.datosOX.dataValues.temp < valMin ||
+    data.datosOX.dataValues.temp > valMax
+  ) {
     fueraRango["temp"] = data.datosOX.dataValues.temp;
   }
 
   return fueraRango;
 }
 
-
 // Programa la tarea para que se ejecute, por ejemplo, cada 3 minutos
 cron.schedule("*/5 * * * *", () => {
   console.log("Tarea programada obtener OX siendo ejecutada...");
   registrarSensor();
 });
-
-
-
 
 /* 
   const idWialonArrayGral = wialonCamiones
