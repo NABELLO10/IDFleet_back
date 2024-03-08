@@ -49,7 +49,7 @@ router.put('/revisarLog/:id', logRevisado)
 router.put('/revisarTodos/:patente',  revisarTodos)
 router.get('/obtenerLogConductor2/:patente',  obtenerLogConductor2)
 router.post('/inicioConductor',  inicioConductor)
-router.post('/obtenerConductorActivo/:patente/:rut',  obtenerConductorActivo)
+router.get('/obtenerConductorActivo/:patente/:rut',  obtenerConductorActivo)
 router.post('/enviarGPS',  enviarGPS)
 
 

@@ -75,6 +75,7 @@ const registrarSensor = async () => {
       console.error(`exec error: ${error}`);
       return;
     }
+   
 
     arraySensores.map(async (r) => {
 
@@ -122,7 +123,7 @@ const registrarSensor = async () => {
         },
       });
 
-      if (existeResumen.length > 0) {
+         if (existeResumen.length > 0) {
         await ResumenGPS.update(
           {
             patente: r.Patente,

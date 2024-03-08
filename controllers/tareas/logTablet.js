@@ -53,7 +53,6 @@ const fechaChile = moment.tz(new Date(), 'America/Santiago').format('YYYY-MM-DD 
   });
 } */
 
-
 async function guardarLogTablet() { 
   const records = await ResumenTablet.findAll();
 

@@ -337,27 +337,21 @@ const inicioConductor = async (req, res) => {
 }
 
 const obtenerConductorActivo = async (req, res) => {
-  const {patente, rut} = req.params
+  const { patente, rut } = req.params;
   try {
-
-    const activo = await Empresas.findOne({
+    const activo = await SesionConductores.findOne({
       where: {
         patente,
-        rut,
+        rut_conductor: rut,
         est_activo: 1,
       },
-    }); 
+    });
 
-    if(activo){
-      return 1
-    }
-
-    return 0
-
+    return res.status(200).json(activo);
   } catch (error) {
-      console.log(error)
+    console.log(error);
   }
-}
+};
 
 
 const enviarGPS = async (req, res) => {
